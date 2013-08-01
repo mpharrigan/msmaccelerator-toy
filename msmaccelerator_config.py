@@ -114,7 +114,7 @@ c = get_config()
 # c.Simulator.log_level = 30
 
 # Interval at which to save positions to a disk, in units of steps
-c.Simulator.report_interval = 100
+c.Simulator.report_interval = 1000
 
 # Path to the XML file containing the OpenMM system to propagate
 # c.Simulator.system_xml = 'system.xml'
@@ -263,7 +263,7 @@ c.AdaptiveServer.topology_pdb = 'single.pdb'
 # This should be a single PDB or other type of loadable trajectory file. These
 # structures will only be used in the beginning, before we have an actual MSM to
 # use.
-c.BaseSampler.seed_structures = 'single.pdb'
+c.BaseSampler.seed_structures = 'seed_structures.h5'
 
 #------------------------------------------------------------------------------
 # CentroidSampler configuration

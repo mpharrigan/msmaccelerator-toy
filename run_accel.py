@@ -10,8 +10,9 @@ It should be pretty simple just to look at
 #############################################################################
 
 import os
-import time
 import subprocess
+import subprocess
+import time
 #############################################################################
 # GLOBALS
 #############################################################################
@@ -22,6 +23,8 @@ N_ENGINES = 4
 #############################################################################
 # Script
 #############################################################################
+
+subprocess.call("./clean.sh", shell=True)
 
 # start the server independently
 server = subprocess.Popen(['accelerator', 'serve'])
@@ -34,7 +37,7 @@ for i in range(N_ROUNDS):
         int_file = "integrator%d.xml" % j
         # each of these engines will run a single trajectory
         proc = subprocess.Popen(['accelerator', 'simulate',
-            '--device_index='+str(j), '--integrator_xml=%s' % int_file])
+            '--device_index=' + str(j), '--integrator_xml=%s' % int_file])
         pids.add(proc.pid)
         time.sleep(1)
 
@@ -45,8 +48,8 @@ for i in range(N_ROUNDS):
         pids.remove(pid)
 
     # build MSM #TODO: implement rmsd in 2d
-    #proc = subprocess.Popen(['accelerator', 'model'])
-    #proc.wait()
+    # proc = subprocess.Popen(['accelerator', 'model'])
+    # proc.wait()
 
 # we're all done, so lets shut down the server
 server.kill()

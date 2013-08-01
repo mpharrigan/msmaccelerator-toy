@@ -1,6 +1,7 @@
 import mdtraj
 from matplotlib import pyplot as pp
 import os
+import mullerforce as mf
 
 def plot_from_trajlist(trajlist):
     i = 0
@@ -21,6 +22,7 @@ def get_trajlist(directory):
     return trajlist
 
 def load_and_plot(directory='trajs/'):
+    mf.MullerForce.plot()
     plot_from_trajlist(get_trajlist(directory))
 
 if __name__=="__main__":
