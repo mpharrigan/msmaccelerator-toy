@@ -37,7 +37,7 @@ for i in range(N_ROUNDS):
         int_file = "integrator%d.xml" % j
         # each of these engines will run a single trajectory
         proc = subprocess.Popen(['accelerator', 'OpenMM',
-            '--device_index=' + str(j), '--integrator_xml=%s' % int_file])
+            '--device_index=' + str(j)])
         pids.add(proc.pid)
         time.sleep(1)
 

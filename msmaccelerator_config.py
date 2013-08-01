@@ -123,7 +123,7 @@ c.Modeler.rmsd_atom_indices = 'AtomIndices.dat'
 # c.OpenMMSimulator.log_level = 30
 
 # Interval at which to save positions to a disk, in units of steps
-c.OpenMMSimulator.report_interval = 100
+c.OpenMMSimulator.report_interval = 1000
 
 # Path to the XML file containing the OpenMM system to propagate
 # c.OpenMMSimulator.system_xml = 'system.xml'
@@ -315,8 +315,8 @@ c.AdaptiveServer.topology_pdb = 'single.pdb'
 # structures will only be used in the beginning, before we have an actual MSM to
 # use.
 
-#c.BaseSampler.seed_structures = 'seed_structures.h5'
-c.BaseSampler.seed_structures = 'single.pdb'
+c.BaseSampler.seed_structures = 'seed_structures.h5'
+#c.BaseSampler.seed_structures = 'single.pdb'
 
 #------------------------------------------------------------------------------
 # CentroidSampler configuration
@@ -351,7 +351,7 @@ c.BaseSampler.seed_structures = 'single.pdb'
 # of counts. At beta = 2, we choose microstates proportional to our estimate of
 # their current equilibrium propbability. The explicit formula used is: Prob(
 # choose state i ) ~ \sum_j C_{ij} ^{ beta - 1 }
-# c.CountsSampler.beta = 1
+c.CountsSampler.beta = -10
 
 # Trajectory file giving the initial structures that you want to sample from.
 # This should be a single PDB or other type of loadable trajectory file. These
