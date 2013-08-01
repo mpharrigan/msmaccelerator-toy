@@ -58,14 +58,20 @@ c = get_config()
 
 # Modeler will inherit config from: Device, App, Application
 
-# Set the log level by value or name.
-# c.Modeler.log_level = 30
-
 # URL to connect to server with
 # c.Modeler.zmq_url = '127.0.0.1'
 
+# Set the log level by value or name.
+# c.Modeler.log_level = 30
+
+# Should we use a custom distance metric for clusering instead of RMSD?
+c.Modeler.use_custom_metric = True
+
 # Symmetrization method for constructing the reversibile counts matrix.
 # c.Modeler.symmetrize = None
+
+# File containing a pickled metric for use in clustering.
+c.Modeler.custom_metric_path = 'metric.pickl'
 
 # Subsample data by taking only every stride-th point
 # c.Modeler.stride = 1
@@ -79,7 +85,7 @@ c = get_config()
 # File containing the indices of atoms to use in the RMSD computation. Using a
 # PDB as input, this file can be created with the MSMBuilder script
 # CreateAtomIndices.py
-# c.Modeler.rmsd_atom_indices = 'AtomIndices.dat'
+c.Modeler.rmsd_atom_indices = 'AtomIndices.dat'
 
 # Do ergodic trimming when constructing the Markov state model. This is
 # generally a good idea for building MSMs in the high-data regime where you wish
@@ -93,6 +99,9 @@ c = get_config()
 # clusters until each data point is within this cutoff from its cluster center.
 # c.Modeler.rmsd_distance_cutoff = 0.2
 
+# PDB file giving the topology of the system
+# c.Modeler.topology_pdb = <Undefined>
+
 # ZeroMQ port to connect to the server on
 # c.Modeler.zmq_port = 12345
 
@@ -100,51 +109,86 @@ c = get_config()
 # c.Modeler.log_format = '[%(name)s] %(message)s'
 
 #------------------------------------------------------------------------------
-# Simulator configuration
+# OpenMMSimulator configuration
 #------------------------------------------------------------------------------
 
 # This is an application.
 
-# Simulator will inherit config from: Device, App, Application
+# OpenMMSimulator will inherit config from: Device, App, Application
 
 # Path to the XML file containing the OpenMM Integrator to use
-# c.Simulator.integrator_xml = 'integrator.xml'
+# c.OpenMMSimulator.integrator_xml = 'integrator.xml'
 
 # Set the log level by value or name.
-# c.Simulator.log_level = 30
+# c.OpenMMSimulator.log_level = 30
 
 # Interval at which to save positions to a disk, in units of steps
-c.Simulator.report_interval = 1000
+c.OpenMMSimulator.report_interval = 100
 
 # Path to the XML file containing the OpenMM system to propagate
-# c.Simulator.system_xml = 'system.xml'
+# c.OpenMMSimulator.system_xml = 'system.xml'
 
 # Do local energy minimization on the configuration that's passed to me, before
 # running dynamics
-c.Simulator.minimize = False
+c.OpenMMSimulator.minimize = False
 
 # OpenMM device index for CUDA or OpenCL platforms. This is used to select which
 # GPU will be used on a multi-gpu system. This option is ignored on reference
 # platform
-# c.Simulator.device_index = 0
+# c.OpenMMSimulator.device_index = 0
 
 # URL to connect to server with
-# c.Simulator.zmq_url = '127.0.0.1'
+# c.OpenMMSimulator.zmq_url = '127.0.0.1'
 
 # The OpenMM platform on which to run the simulation
-# c.Simulator.platform = 'CUDA'
+# c.OpenMMSimulator.platform = 'CUDA'
 
 # Number of steps of dynamics to do
-c.Simulator.number_of_steps = 100000
+c.OpenMMSimulator.number_of_steps = 10000
 
 # ZeroMQ port to connect to the server on
-# c.Simulator.zmq_port = 12345
+# c.OpenMMSimulator.zmq_port = 12345
 
 # Choose random initial velocities from the Maxwell-Boltzmann distribution
-# c.Simulator.random_initial_velocities = True
+# c.OpenMMSimulator.random_initial_velocities = True
 
 # The Logging format template
-# c.Simulator.log_format = '[%(name)s] %(message)s'
+# c.OpenMMSimulator.log_format = '[%(name)s] %(message)s'
+
+#------------------------------------------------------------------------------
+# AmberSimulator configuration
+#------------------------------------------------------------------------------
+
+# This is an application.
+
+# AmberSimulator will inherit config from: Device, App, Application
+
+# Which AMBER executable to use?
+# c.AmberSimulator.executable = 'pmemd'
+
+# Directory to work in. If not set, we'll requirest a temporary directory from
+# the OS and clean it up when we're finished. This option is useful for
+# debugging.
+# c.AmberSimulator.workdir = ''
+
+# Set the log level by value or name.
+# c.AmberSimulator.log_level = 30
+
+# Parameter/topology file for the system
+# c.AmberSimulator.prmtop = <Undefined>
+
+# AMBER .in file controlling the production run. If no production is desired, do
+# not set this parameter.
+# c.AmberSimulator.mdin = <Undefined>
+
+# URL to connect to server with
+# c.AmberSimulator.zmq_url = '127.0.0.1'
+
+# The Logging format template
+# c.AmberSimulator.log_format = '[%(name)s] %(message)s'
+
+# ZeroMQ port to connect to the server on
+# c.AmberSimulator.zmq_port = 12345
 
 #------------------------------------------------------------------------------
 # Interactor configuration
@@ -203,11 +247,18 @@ c.Simulator.number_of_steps = 100000
 
 # AdaptiveServer will inherit config from: BaseServer, App, Application
 
+# Which MD engine do you want to configure the server to iterface with? If
+# 'OpenMM', the server will emit xml-serialized states to simulators that
+# connect. If 'AMBER', the server will instead emit inpcrd files to the
+# simulators.
+# c.AdaptiveServer.md_engine = 'OpenMM'
+
 # Set the log level by value or name.
 # c.AdaptiveServer.log_level = 30
 
 # Path to the XML file containing the OpenMM system to propagate. This is
-# required by the server to properly serialize the starting conformations.
+# required by the server, iff md_engine=='OpenMM', to properly serialize the
+# starting conformations.
 # c.AdaptiveServer.system_xml = 'system.xml'
 
 # Directory on the local filesystem where output trajectories will be saved
@@ -263,7 +314,9 @@ c.AdaptiveServer.topology_pdb = 'single.pdb'
 # This should be a single PDB or other type of loadable trajectory file. These
 # structures will only be used in the beginning, before we have an actual MSM to
 # use.
-c.BaseSampler.seed_structures = 'seed_structures.h5'
+
+#c.BaseSampler.seed_structures = 'seed_structures.h5'
+c.BaseSampler.seed_structures = 'single.pdb'
 
 #------------------------------------------------------------------------------
 # CentroidSampler configuration

@@ -36,7 +36,7 @@ for i in range(N_ROUNDS):
     for j in range(N_ENGINES):
         int_file = "integrator%d.xml" % j
         # each of these engines will run a single trajectory
-        proc = subprocess.Popen(['accelerator', 'simulate',
+        proc = subprocess.Popen(['accelerator', 'OpenMM',
             '--device_index=' + str(j), '--integrator_xml=%s' % int_file])
         pids.add(proc.pid)
         time.sleep(1)
@@ -47,9 +47,9 @@ for i in range(N_ROUNDS):
         print('{p} finished'.format(p=pid))
         pids.remove(pid)
 
-    # build MSM #TODO: implement rmsd in 2d
-    # proc = subprocess.Popen(['accelerator', 'model'])
-    # proc.wait()
+    # build MSM
+    proc = subprocess.Popen(['accelerator', 'model'])
+    proc.wait()
 
 # we're all done, so lets shut down the server
 server.kill()

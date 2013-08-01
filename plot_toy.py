@@ -1,7 +1,9 @@
-import mdtraj
 from matplotlib import pyplot as pp
-import os
+from msmbuilder import io
+import mdtraj
 import mullerforce as mf
+import os
+import sqlite3 as sql
 
 def plot_from_trajlist(trajlist):
     i = 0
@@ -9,7 +11,7 @@ def plot_from_trajlist(trajlist):
         xs = t.xyz[:,0,0]
         ys = t.xyz[:,0,1]
         co = range(len(xs))
-        pp.plot(xs,ys,'o')
+        pp.plot(xs,ys, 'o')
         i+=1
     pp.show()
 
@@ -20,6 +22,9 @@ def get_trajlist(directory):
         if f.endswith(".h5"):
             trajlist.append(mdtraj.load(directory + "/" + f))
     return trajlist
+
+def get_model(filename):
+    pass
 
 def load_and_plot(directory='trajs/'):
     mf.MullerForce.plot()
