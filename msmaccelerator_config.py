@@ -87,6 +87,8 @@ c.Modeler.custom_metric_path = 'metric.pickl'
 # CreateAtomIndices.py
 c.Modeler.rmsd_atom_indices = 'AtomIndices.dat'
 
+c.Modeler.clusterer = 'hybrid'
+
 # Do ergodic trimming when constructing the Markov state model. This is
 # generally a good idea for building MSMs in the high-data regime where you wish
 # to prevent transitions that appear nonergodic because they've been
@@ -144,7 +146,7 @@ c.OpenMMSimulator.minimize = False
 # c.OpenMMSimulator.platform = 'CUDA'
 
 # Number of steps of dynamics to do
-c.OpenMMSimulator.number_of_steps = 10000
+c.OpenMMSimulator.number_of_steps = 100000
 
 # ZeroMQ port to connect to the server on
 # c.OpenMMSimulator.zmq_port = 12345

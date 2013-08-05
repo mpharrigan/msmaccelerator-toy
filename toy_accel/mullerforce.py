@@ -23,6 +23,7 @@ class MullerForce(mm.CustomExternalForce):
     AA = [-200, -100, -170, 15]
     XX = [1, 0, -0.5, -1]
     YY = [0, 0.5, 1.5, 1]
+    strength = 0.5
 
     def __init__(self):
         # start with a harmonic restraint on the Z coordinate
@@ -32,6 +33,9 @@ class MullerForce(mm.CustomExternalForce):
             fmt = dict(aa=self.aa[j], bb=self.bb[j], cc=self.cc[j], AA=self.AA[j], XX=self.XX[j], YY=self.YY[j])
             expression += '''+ {AA}*exp({aa} *(x - {XX})^2 + {bb} * (x - {XX}) 
                                * (y - {YY}) + {cc} * (y - {YY})^2)'''.format(**fmt)
+        
+        # Include scaling expression
+        expression = "{strength}*(".format(strength=self.strength) + expression + ")"
         super(MullerForce, self).__init__(expression)
 
     @classmethod
@@ -55,6 +59,7 @@ class MullerForce(mm.CustomExternalForce):
         if ax is None:
             ax = pp
         ax.contourf(xx, yy, V.clip(max=200), 40, **kwargs)
+        return minx, maxx, miny, maxy
 
     @classmethod
     def plot_voronoi(cls, points, limits=None, color='black'):

@@ -1,9 +1,9 @@
 from msmbuilder.metrics.baseclasses import Vectorized
 import numpy as np
+import pickle
 
-def make():
-    import pickle
-    f = open('metric.pickl','w')
+def make(metric_fn):
+    f = open(metric_fn,'w')
     e = Euclidean2d()
     pickle.dump(e,f)
 
