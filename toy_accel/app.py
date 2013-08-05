@@ -12,6 +12,7 @@ def generate_main(args):
     rep_int = args.rep_int
     n_steps = args.n_steps
     beta = args.beta
+    lag_time = args.lag_time
     
     
     # Set up filenames
@@ -37,7 +38,7 @@ def generate_main(args):
     
     # Generate config file
     generate_system.generate_config_file(rep_int, n_steps,
-            rel_top_fn, seed_rel_fn, beta, config_fn)
+            rel_top_fn, seed_rel_fn, beta, config_fn, lag_time)
     
     # Generate custom metric
     euclidean.make(metric_out_fn)
@@ -53,15 +54,19 @@ def view_main(args):
     out_dir = args.out_dir
     top_fn = args.top_fn
     fig_out_dir = args.fig_out_dir
+    is_short = args.is_short
     
     # Set up filenames
     db_out_fn = out_dir + '/' + db_fn
     fig_out_dir = out_dir + '/' + fig_out_dir
     os.mkdir(fig_out_dir)
     
-    plot_toy.view_movie(db_out_fn, top_fn, fig_out_dir)
-    #plot_toy.view_starting_states(db_out_fn, top_fn)
-    #plot_toy.view_clustering(db_out_fn, top_fn)
+    if is_short:
+        plot_toy.view_clustering(db_out_fn, top_fn, fig_out_dir)
+    else:
+        plot_toy.view_movie(db_out_fn, top_fn, fig_out_dir)
+    # plot_toy.view_starting_states(db_out_fn, top_fn)
+    # plot_toy.view_clustering(db_out_fn, top_fn)
     
 def quant_main(args):
     """Perform quantitative analysis on the model(s).
@@ -70,4 +75,12 @@ def quant_main(args):
     and comparing them to analytical solution and/or really long run
     markov model gold standard.
     """
+    db_fn = args.db_fn
+    out_dir = args.out_dir
+    fig_out_dir = args.fig_out_dir
     
+    # Set up filenames
+    db_out_fn = out_dir + '/' + db_fn
+    fig_out_dir = out_dir + '/' + fig_out_dir
+    # os.mkdir(fig_out_dir)
+    plot_toy.quant_implied_timescales(db_out_fn, fig_out_dir)

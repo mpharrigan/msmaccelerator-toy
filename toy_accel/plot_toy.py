@@ -1,9 +1,12 @@
 from matplotlib import pyplot as pp
 from msmbuilder import io
+from msmbuilder import msm_analysis as msma
+from msmaccelerator.core import markovstatemodel as msmm
 import mdtraj
 import mullerforce as mf
 import os
 import sqlite3 as sql
+import numpy as np
 
 def get_trajlist_from_dir(directory):
     trajlist = list()
@@ -27,7 +30,8 @@ def get_trajlist_from_fnlist(fnlist):
     return trajlist
 
 def get_model_from_sql(sqlresult):
-    model = io.loadh(sqlresult[3])
+    # model = io.loadh(sqlresult[3])
+    model = msmm.MarkovStateModel.load(sqlresult[3])
     return model
 
 def get_starting_state_from_sql(sqlresult, top_fn):
@@ -87,6 +91,7 @@ class ToyPlotter:
         
         epsilon = 0.1
         limits = mf.MullerForce.plot()
+        pp.clf()
         self.xlim = (limits[0], limits[1] - epsilon)
         self.ylim = (limits[2], limits[3] - epsilon)
         
@@ -120,7 +125,7 @@ class ToyPlotter:
         model = get_model_from_sql(model_sql)
         
         # Get and plot trajectories from the model
-        traj_fns = model['traj_filenames']
+        traj_fns = model.traj_filenames
         trajs = get_trajlist_from_fnlist(traj_fns)
         for t in trajs:
             xs = t.xyz[:, 0, 0]
@@ -129,7 +134,7 @@ class ToyPlotter:
         
         # Get generators
         points = list()
-        gen_i = model['generator_indices']
+        gen_i = model.generator_indices
         
         for gen in gen_i:
             point = trajs[gen[0]][gen[1]].xyz[0, 0]
@@ -183,16 +188,53 @@ class ToyPlotter:
         self.plot_starting_states(i + 1, show=False, save=False)
         if show: self.show_fig()
         if save: self.save_fig()
+        
+    def get_implied_timescales(self, i, num_vals=2):
+        # Get the model
+        model_sql = self.all_models[i]
+        model = get_model_from_sql(model_sql)
+        
+        transition_mat = model.transition_matrix
+        lag_time = model.lag_time
+        
+        print('\n\n')
+        print(i)
+        
+        if not msma.is_transition_matrix(transition_mat):
+            print ("%d is not a transition matrix!" % i)
+            
+        eigenvals, _ = msma.get_eigenvectors(transition_mat, num_vals + 1, epsilon=1.0)
+        eigenvals = eigenvals[1:]
+        
+        oo_lambda = [-1.0 / np.log(ev) for ev in eigenvals]
+        
+        print(oo_lambda)
+        
+        return oo_lambda
+        
+    def plot_implied_timescales(self, gold_vals):
+        length = len(self.all_models)
+        
+        oo_lambdas = np.array([self.get_implied_timescales(i) for i in range(length)])
+        num_ev = oo_lambdas.shape[1]
+        
+        for j in range(num_ev):
+            ys = oo_lambdas[:,j]
+            pp.plot(ys, 'o-')
+    
+        pp.hlines(gold_vals, 0, oo_lambdas.shape[0])
+    
+        pp.yscale('log')
+        pp.show()
 
-
-def view_starting_states(db_fn, top_fn):
-    p = ToyPlotter(db_fn, top_fn)
+def view_starting_states(db_fn, top_fn, fig_out_dir):
+    p = ToyPlotter(db_fn, top_fn, fig_out_dir)
     length = len(p.all_models)
     for i in range(length):
         p.plot_starting_states(i)  
     
-def view_clustering(db_fn, top_fn):    
-    p = ToyPlotter(db_fn, top_fn)
+def view_clustering(db_fn, top_fn, fig_out_dir):    
+    p = ToyPlotter(db_fn, top_fn, fig_out_dir)
     length = len(p.all_models)
     for i in range(length):
         p.plot_clustering_to(i)
@@ -200,11 +242,15 @@ def view_clustering(db_fn, top_fn):
 def view_movie(db_fn, top_fn, fig_out_dir):
     p = ToyPlotter(db_fn, top_fn, fig_out_dir)
     length = len(p.all_models)
-    #for i in [0, 1, 2, length - 1]:
+    # for i in [0, 1, 2, length - 1]:
     for i in range(length):
         print("Plotting model %d" % i)
         p.plot_trajs_movie_at(i)
         p.plot_clustering_to(i)
         if i + 1 < length:
             p.plot_starting_after(i)
+            
+def quant_implied_timescales(db_fn, fig_out_dir):
+    p = ToyPlotter(db_fn, None, fig_out_dir)
+    p.plot_implied_timescales(gold_vals=[1551.418538, 23.88297])
 

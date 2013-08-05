@@ -13,6 +13,8 @@ def quant_main(args):
     app.quant_main(args)
 
 if __name__ == "__main__":
+    
+    # Main parser
     parser = arglib.ArgumentParser(description="""Do everything with a 
             toy system.""")
     
@@ -21,6 +23,7 @@ if __name__ == "__main__":
     
     subparsers = parser.add_subparsers(title="Available functions")
     
+    # Main -> Run
     p_run = subparsers.add_parser('run')
     p_run.set_defaults(func=run_main)
     p_run.add_argument('-nstart', dest='num_starting_struct',
@@ -50,9 +53,14 @@ if __name__ == "__main__":
                        help="Number of engines",
                        type=int,
                        default=5)
+    p_run.add_argument('-lt', dest='lag_time',
+                       help="Lag time for MSM",
+                       type=int,
+                       default=1)
     
+    # Main -> View
     p_view = subparsers.add_parser('view')
-    p_view.set_defaults(func=view_main)
+
     p_view.add_argument('-db', dest='db_fn',
                         help="Database filename (relative)",
                         default='db.sqlite')
@@ -60,8 +68,19 @@ if __name__ == "__main__":
                         help="Figure output directory",
                         default='figs/')
     
-    p_quant = subparsers.add_parser('quant')
-    p_quant.set_defaults(func=quant_main)
+    view_subparsers = p_view.add_subparsers(title="Do various things with data")
+    
+    # Main -> View -> Movie
+    p_movie = view_subparsers.add_parser('movie')
+    p_movie.set_defaults(func=view_main)
+    p_movie.add_argument('-short', dest='is_short',
+                         help="Make a short movie",
+                         type=bool, default=False)
+
+    
+    # Main -> View -> Quant        
+    p_quant = view_subparsers.add_parser('quant')
+    p_quant.set_defaults(func=quant_main) 
     
     args = parser.parse_args()
     args.func(args)

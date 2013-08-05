@@ -57,7 +57,7 @@ def generate_starting_structures_random(top_fn, num, out_fn):
     print("Writing random seed structures: %s" % out_fn)
     traj.save(out_fn)
 
-def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config_fn):
+def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config_fn, lag_time):
     
     # Prepare config
     configs = list()
@@ -71,6 +71,7 @@ def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config
     configs.append("c.AdaptiveServer.topology_pdb = '%s'" % rel_top_fn)
     configs.append("c.BaseSampler.seed_structures = '%s'" % seed_rel_fn)
     configs.append("c.CountsSampler.beta = %d" % beta)
+    configs.append("c.Modeler.lag_time = %d" % lag_time)
     
     # Write config
     with open(config_fn, 'w') as config_file:

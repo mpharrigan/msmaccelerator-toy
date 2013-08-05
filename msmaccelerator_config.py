@@ -1,3 +1,4 @@
+
 # Configuration file for msmaccelerator.
 
 c = get_config()
