@@ -1,4 +1,7 @@
-import generate_system, run_accel, euclidean, plot_toy
+import toy_accel.plot_toy as plot_toy
+import toy_accel.generate_system as generate_system
+import toy_accel.run_accel as run_accel
+import toy_accel.euclidean as euclidean
 import os
 
 def generate_main(args):

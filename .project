@@ -3,6 +3,9 @@
 	<name>toy-accel</name>
 	<comment></comment>
 	<projects>
+		<project>mdtraj</project>
+		<project>msmaccelerator</project>
+		<project>msmbuilder</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

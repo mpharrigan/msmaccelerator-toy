@@ -1,12 +1,19 @@
+
+# Need to set up matplotlib before importing from it
+import matplotlib
+matplotlib.use("Agg")
+
 from matplotlib import pyplot as pp
-from msmbuilder import io
-from msmbuilder import msm_analysis as msma
 from msmaccelerator.core import markovstatemodel as msmm
+from msmbuilder import msm_analysis as msma
 import mdtraj
-import toy_accel.mullerforce as mf
+import numpy as np
 import os
 import sqlite3 as sql
-import numpy as np
+import toy_accel.mullerforce as mf
+
+
+
 
 def get_trajlist_from_dir(directory):
     trajlist = list()
@@ -30,7 +37,6 @@ def get_trajlist_from_fnlist(fnlist):
     return trajlist
 
 def get_model_from_sql(sqlresult):
-    # model = io.loadh(sqlresult[3])
     model = msmm.MarkovStateModel.load(sqlresult[3])
     return model
 
@@ -84,6 +90,7 @@ def database_stuff(dbfile='db.sqlite'):
 class ToyPlotter:
 
     def __init__(self, dbfile, top_fn, fig_out_dir):
+        
         self.all_trajs, self.all_models, self.all_starting = database_stuff(dbfile)
         self.top_fn = top_fn
         self.fig_out_dir = fig_out_dir + '/'

@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
 from simtk import openmm, unit
-from sys import argv
 import mdtraj
 import mullerforce as mf
 import numpy as np
 import random
-import sys
 
 # Global parameters
 nParticles = 100
@@ -77,23 +75,5 @@ def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config
     with open(config_fn, 'w') as config_file:
         for line in configs:
             config_file.write(line + '\n')
-        
-
-
-# if __name__ == "__main__":
-#     error = "Specify what structures to generate: random, fixed, none"
-#     if len(argv) < 2:
-#         print(error)
-#         sys.exit(1)
-#     if argv[1] == 'random':
-#         generate_starting_structures_random()
-#     elif argv[1] == 'fixed':
-#         generate_starting_structures_fixed()
-#     elif argv[1] == 'none':
-#         pass
-#     else:
-#         print(error)
-#         sys.exit(1)
-#     generate_openmm() #TODO: Update these function calls or remove this code
 
 

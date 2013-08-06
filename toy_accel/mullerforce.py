@@ -5,12 +5,12 @@ since OpenMM needs to work in 3D. This isn't really a big deal, except
 that it affects the meaning of the temperature and kinetic energy. So
 take the meaning of those numbers with a grain of salt.
 """
-from simtk.unit import kelvin, picosecond, femtosecond, nanometer, dalton
+# from simtk.unit import kelvin, picosecond, femtosecond, nanometer, dalton $TODO Remove
 import matplotlib as mpl
 import matplotlib.pyplot as pp
 import numpy as np
 import simtk.openmm as mm
-import voronoi
+import toy_accel.voronoi as voronoi
 
 
 class MullerForce(mm.CustomExternalForce):
