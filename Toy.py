@@ -57,6 +57,9 @@ if __name__ == "__main__":
                        help="Lag time for MSM",
                        type=int,
                        default=1)
+    p_run.add_argument('-rt', dest='run_type',
+                       help="How to schedule the engines",
+                       default='constant')
     
     # Main -> View
     p_view = subparsers.add_parser('view')
@@ -76,6 +79,9 @@ if __name__ == "__main__":
     p_movie.add_argument('-short', dest='is_short',
                          help="Make a short movie",
                          type=bool, default=False)
+    p_movie.add_argument('-stride', dest='movie_stride',
+                         help="Stride the movie frames by this",
+                         type=int, default=10)
 
     
     # Main -> View -> Quant        

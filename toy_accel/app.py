@@ -47,7 +47,13 @@ def generate_main(args):
     
 def run_main(args):
     generate_main(args)
-    run_accel.run_accel(args)
+    
+    # Parse arguments
+    out_dir = args.out_dir
+    n_rounds = args.n_rounds
+    n_engines = args.n_engines
+    type = args.run_type
+    run_accel.run_accel(out_dir, n_rounds, n_engines, type)
     
 def view_main(args):
     db_fn = args.db_fn
@@ -55,6 +61,7 @@ def view_main(args):
     top_fn = args.top_fn
     fig_out_dir = args.fig_out_dir
     is_short = args.is_short
+    stride = args.movie_stride
     
     # Set up filenames
     db_out_fn = out_dir + '/' + db_fn
@@ -64,7 +71,7 @@ def view_main(args):
     if is_short:
         plot_toy.view_clustering(db_out_fn, top_fn, fig_out_dir)
     else:
-        plot_toy.view_movie(db_out_fn, top_fn, fig_out_dir)
+        plot_toy.view_movie(db_out_fn, top_fn, fig_out_dir, stride)
     # plot_toy.view_starting_states(db_out_fn, top_fn)
     # plot_toy.view_clustering(db_out_fn, top_fn)
     

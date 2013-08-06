@@ -124,14 +124,15 @@ class ToyPlotter:
         model_sql = self.all_models[i]
         model = get_model_from_sql(model_sql)
         
-        # Get and plot trajectories from the model
+        # Get trajectories from the model
         traj_fns = model.traj_filenames
         trajs = get_trajlist_from_fnlist(traj_fns)
+        
         for t in trajs:
             xs = t.xyz[:, 0, 0]
             ys = t.xyz[:, 0, 1]
             pp.plot(xs, ys, 'wo')
-        
+                    
         # Get generators
         points = list()
         gen_i = model.generator_indices
@@ -148,12 +149,12 @@ class ToyPlotter:
         return limits
         
         
-    def plot_trajs_movie_at(self, i, show=False, save=True):
+    def plot_trajs_movie_at(self, i, stride=1, show=False, save=True):
         trajs_sql = self.all_trajs[i]
         trajs = get_trajlist_from_sqlresult(trajs_sql)
         
         n_frames = trajs[0].n_frames
-        for frame in xrange(n_frames):
+        for frame in xrange(0,n_frames, stride):
             # Plot the potential
             mf.MullerForce.plot()
 
@@ -239,13 +240,13 @@ def view_clustering(db_fn, top_fn, fig_out_dir):
     for i in range(length):
         p.plot_clustering_to(i)
         
-def view_movie(db_fn, top_fn, fig_out_dir):
+def view_movie(db_fn, top_fn, fig_out_dir, stride):
     p = ToyPlotter(db_fn, top_fn, fig_out_dir)
     length = len(p.all_models)
     # for i in [0, 1, 2, length - 1]:
     for i in range(length):
         print("Plotting model %d" % i)
-        p.plot_trajs_movie_at(i)
+        p.plot_trajs_movie_at(i, stride=stride)
         p.plot_clustering_to(i)
         if i + 1 < length:
             p.plot_starting_after(i)
