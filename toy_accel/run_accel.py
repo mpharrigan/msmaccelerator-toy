@@ -46,13 +46,13 @@ def run_round(n_engines):
     proc = subprocess.Popen(['accelerator', 'model'])
     proc.wait()      
 
-def exponential_scheduler(out_dir, n_rounds):
+def exponential_scheduler(n_rounds):
     for i in range(n_rounds):
         n_engines = 2 ** i
         _print_round_info(i, n_engines)
         run_round(n_engines)
 
-def constant_scheduler(out_dir, n_rounds, n_engines):
+def constant_scheduler(n_rounds, n_engines):
     
     for i in range(n_rounds):
         _print_round_info(i, n_engines)
