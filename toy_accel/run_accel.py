@@ -48,7 +48,7 @@ def run_round(n_engines):
 
 def exponential_scheduler(out_dir, n_rounds):
     for i in range(n_rounds):
-        n_engines = 2**i
+        n_engines = 2 ** i
         _print_round_info(i, n_engines)
         run_round(n_engines)
 
@@ -60,16 +60,16 @@ def constant_scheduler(out_dir, n_rounds, n_engines):
     
 
     
-def run_accel(out_dir, type, n_rounds, n_engines):
+def run_accel(out_dir, run_type, n_rounds, n_engines):
     # Change to working directory
     os.chdir(os.path.abspath(out_dir))    
     
     # start the server independently
     server = subprocess.Popen(['accelerator', 'serve'])
     
-    if type == 'constant':
+    if run_type == 'constant':
         constant_scheduler(n_rounds, n_engines)
-    elif type == 'exponential':
+    elif run_type == 'exponential':
         exponential_scheduler(n_rounds)
     else:
         print("Please specify a valid type of scheduler")

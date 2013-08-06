@@ -52,8 +52,8 @@ def run_main(args):
     out_dir = args.out_dir
     n_rounds = args.n_rounds
     n_engines = args.n_engines
-    type = args.run_type
-    run_accel.run_accel(out_dir, n_rounds, n_engines, type)
+    run_type = args.run_type
+    run_accel.run_accel(out_dir, run_type, n_rounds, n_engines)
     
 def view_main(args):
     db_fn = args.db_fn
