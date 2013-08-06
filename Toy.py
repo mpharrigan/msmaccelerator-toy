@@ -41,25 +41,41 @@ if __name__ == "__main__":
                        help="Reporting interval",
                        type=int,
                        default=300)
-    p_run.add_argument('-b', dest='beta',
-                       help="Beta for counts sampler",
-                       type=float,
-                       default=0.0)
     p_run.add_argument('-nround', dest='n_rounds',
                        help="Number of rounds",
                        type=int,
                        default=10)
-    p_run.add_argument('-neng', dest='n_engines',
-                       help="Number of engines",
-                       type=int,
-                       default=5)
     p_run.add_argument('-lt', dest='lag_time',
                        help="Lag time for MSM",
                        type=int,
                        default=1)
-    p_run.add_argument('-rt', dest='run_type',
-                       help="How to schedule the engines",
-                       default='constant')
+    p_run.add_argument('-b', dest='beta',
+                       help="Beta for counts sampler. Need this for initial config as well",
+                       type=float,
+                       default=0.0)  
+
+    run_subparsers = p_run.add_subparsers(title="Ways to run")
+    
+    # Main -> Run -> Constant
+    p_run_const = run_subparsers.add_parser('constant')
+    p_run_const.set_defaults(runtype='constant')
+    p_run_const.add_argument('-neng', dest='n_engines',
+                       help="Number of engines",
+                       type=int,
+                       default=5)  
+    
+    # Main -> Run -> Exponential
+    p_run_exp = run_subparsers.add_parser('exponential')
+    p_run_exp.set_defaults(runtype='exponential')
+        
+    # Main -> Run -> Varybeta
+    p_run_varyb = run_subparsers.add_parser('varybeta')
+    p_run_varyb.set_defaults(runtype='varybeta')
+    p_run_varyb.add_argument('-neng', dest='n_engines',
+                       help="Number of engines",
+                       type=int,
+                       default=5)
+        
     
     # Main -> View
     p_view = subparsers.add_parser('view')

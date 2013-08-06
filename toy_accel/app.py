@@ -47,13 +47,7 @@ def generate_main(args):
     
 def run_main(args):
     generate_main(args)
-    
-    # Parse arguments
-    out_dir = args.out_dir
-    n_rounds = args.n_rounds
-    n_engines = args.n_engines
-    run_type = args.run_type
-    run_accel.run_accel(out_dir, run_type, n_rounds, n_engines)
+    run_accel.run_accel(args)
     
 def view_main(args):
     db_fn = args.db_fn

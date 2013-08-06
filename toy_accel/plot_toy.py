@@ -3,7 +3,7 @@ from msmbuilder import io
 from msmbuilder import msm_analysis as msma
 from msmaccelerator.core import markovstatemodel as msmm
 import mdtraj
-import mullerforce as mf
+import toy_accel.mullerforce as mf
 import os
 import sqlite3 as sql
 import numpy as np
@@ -154,7 +154,7 @@ class ToyPlotter:
         trajs = get_trajlist_from_sqlresult(trajs_sql)
         
         n_frames = trajs[0].n_frames
-        for frame in xrange(0,n_frames, stride):
+        for frame in xrange(0, n_frames, stride):
             # Plot the potential
             mf.MullerForce.plot()
 
@@ -220,7 +220,7 @@ class ToyPlotter:
         num_ev = oo_lambdas.shape[1]
         
         for j in range(num_ev):
-            ys = oo_lambdas[:,j]
+            ys = oo_lambdas[:, j]
             pp.plot(ys, 'o-')
     
         pp.hlines(gold_vals, 0, oo_lambdas.shape[0])
@@ -253,5 +253,5 @@ def view_movie(db_fn, top_fn, fig_out_dir, stride):
             
 def quant_implied_timescales(db_fn, fig_out_dir):
     p = ToyPlotter(db_fn, None, fig_out_dir)
-    p.plot_implied_timescales(gold_vals=[1551.418538, 23.88297])
+    p.plot_implied_timescales(gold_vals=[1328.7084, 41.62781])
 
