@@ -5,7 +5,7 @@ since OpenMM needs to work in 3D. This isn't really a big deal, except
 that it affects the meaning of the temperature and kinetic energy. So
 take the meaning of those numbers with a grain of salt.
 """
-# from simtk.unit import kelvin, picosecond, femtosecond, nanometer, dalton $TODO Remove
+
 import matplotlib as mpl
 import matplotlib.pyplot as pp
 import numpy as np
@@ -31,9 +31,9 @@ class MullerForce(mm.CustomExternalForce):
         for j in range(4):
             # add the muller terms for the X and Y
             fmt = dict(aa=self.aa[j], bb=self.bb[j], cc=self.cc[j], AA=self.AA[j], XX=self.XX[j], YY=self.YY[j])
-            expression += '''+ {AA}*exp({aa} *(x - {XX})^2 + {bb} * (x - {XX}) 
+            expression += '''+ {AA}*exp({aa} *(x - {XX})^2 + {bb} * (x - {XX})
                                * (y - {YY}) + {cc} * (y - {YY})^2)'''.format(**fmt)
-        
+
         # Include scaling expression
         expression = "{strength}*(".format(strength=self.strength) + expression + ")"
         super(MullerForce, self).__init__(expression)

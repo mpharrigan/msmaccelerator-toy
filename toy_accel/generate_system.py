@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-
 from simtk import openmm, unit
 import mdtraj
-import mullerforce as mf
+import toy_accel.mullerforce as mf
 import numpy as np
 import random
 
@@ -49,14 +47,14 @@ def _randy():
 def generate_starting_structures_random(top_fn, num, out_fn):
     pdb = mdtraj.load(top_fn)
     xyz = list()
-    for i in xrange(num):
+    for _ in xrange(num):
         xyz.append([[_randx(), _randy(), 0.0]])
     traj = mdtraj.Trajectory(np.array(xyz), pdb.topology)
     print("Writing random seed structures: %s" % out_fn)
     traj.save(out_fn)
 
 def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config_fn, lag_time):
-    
+
     # Prepare config
     configs = list()
     configs.append("c = get_config()")
@@ -70,7 +68,7 @@ def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config
     configs.append("c.BaseSampler.seed_structures = '%s'" % seed_rel_fn)
     configs.append("c.CountsSampler.beta = %d" % beta)
     configs.append("c.Modeler.lag_time = %d" % lag_time)
-    
+
     # Write config
     with open(config_fn, 'w') as config_file:
         for line in configs:

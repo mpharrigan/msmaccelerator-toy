@@ -34,33 +34,33 @@ voronoi - compute Voronoi diagram or Delaunay triangulation
 
 voronoi [-t -p -d]  [filename]
 
-Voronoi reads from filename (or standard input if no filename given) for a set 
-of points in the plane and writes either the Voronoi diagram or the Delaunay 
-triangulation to the standard output.  Each input line should consist of two 
+Voronoi reads from filename (or standard input if no filename given) for a set
+of points in the plane and writes either the Voronoi diagram or the Delaunay
+triangulation to the standard output.  Each input line should consist of two
 real numbers, separated by white space.
 
-If option -t is present, the Delaunay triangulation is produced. 
+If option -t is present, the Delaunay triangulation is produced.
 Each output line is a triple i j k, which are the indices of the three points
 in a Delaunay triangle. Points are numbered starting at 0.
 
-If option -t is not present, the Voronoi diagram is produced.  
+If option -t is not present, the Voronoi diagram is produced.
 There are four output record types.
 
 s a b      indicates that an input point at coordinates a b was seen.
 l a b c    indicates a line with equation ax + by = c.
 v a b      indicates a vertex at a b.
 e l v1 v2  indicates a Voronoi segment which is a subsegment of line number l
-           with endpoints numbered v1 and v2.  If v1 or v2 is -1, the line 
+           with endpoints numbered v1 and v2.  If v1 or v2 is -1, the line
            extends to infinity.
 
 Other options include:
 
 d    Print debugging info
 
-p    Produce output suitable for input to plot (1), rather than the forms 
+p    Produce output suitable for input to plot (1), rather than the forms
      described above.
 
-On unsorted data uniformly distributed in the unit square, voronoi uses about 
+On unsorted data uniformly distributed in the unit square, voronoi uses about
 20n+140 bytes of storage.
 
 AUTHOR
@@ -347,7 +347,7 @@ def voronoi(siteList, context):
             # the left HE, and reinsert it
             p = llbnd.intersect(bisector)
             if p is not None:
-                priorityQ.delete(llbnd);
+                priorityQ.delete(llbnd)
                 priorityQ.insert(llbnd, p, bot.distance(p))
 
             # if right HE and the new bisector don't intersect, then reinsert it
@@ -521,7 +521,7 @@ class Halfedge(object):
         if(e.a == 1.0):
             dyp = pt.y - topsite.y
             dxp = pt.x - topsite.x
-            fast = 0;
+            fast = 0
             if ((not right_of_site and e.b < 0.0) or (right_of_site and e.b >= 0.0)):
                 above = dyp >= e.b * dxp
                 fast = above
@@ -629,7 +629,7 @@ class EdgeList(object):
         bucket = int(((pt.x - self.xmin) / self.deltax * self.hashsize))
 
         if(bucket < 0):
-            bucket = 0;
+            bucket = 0
 
         if(bucket >= self.hashsize):
             bucket = self.hashsize - 1
@@ -639,9 +639,9 @@ class EdgeList(object):
             i = 1
             while True:
                 he = self.gethash(bucket - i)
-                if (he is not None): break;
+                if (he is not None): break
                 he = self.gethash(bucket + i)
-                if (he is not None): break;
+                if (he is not None): break
                 i += 1
 
         # Now search linear list of halfedges for the corect one
@@ -649,7 +649,7 @@ class EdgeList(object):
             he = he.right
             while he is not self.rightend and he.isPointRightOf(pt):
                 he = he.right
-            he = he.left;
+            he = he.left
         else:
             he = he.left
             while (he is not self.leftend and not he.isPointRightOf(pt)):
@@ -670,7 +670,7 @@ class PriorityQueue(object):
         self.count = 0
         self.minidx = 0
         self.hash = []
-        for i in range(self.hashsize):
+        for _ in range(self.hashsize):
             self.hash.append(Halfedge())
 
     def __len__(self):
@@ -745,11 +745,11 @@ class SiteList(object):
         self.__sitenum += 1
 
     class Iterator(object):
-        def __init__(this, lst):  this.generator = (s for s in lst)
-        def __iter__(this):      return this
-        def next(this):
+        def __init__(self, lst):  self.generator = (s for s in lst)
+        def __iter__(self):      return self
+        def next(self):
             try:
-                return this.generator.next()
+                return self.generator.next()
             except StopIteration:
                 return None
 
@@ -777,13 +777,13 @@ def computeVoronoiDiagram(points):
     """ Takes a list of point objects (which must have x and y fields).
         Returns a 3-tuple of:
 
-           (1) a list of 2-tuples, which are the x,y coordinates of the 
+           (1) a list of 2-tuples, which are the x,y coordinates of the
                Voronoi diagram vertices
            (2) a list of 3-tuples (a,b,c) which are the equations of the
                lines in the Voronoi diagram: a*x + b*y = c
-           (3) a list of 3-tuples, (l, v1, v2) representing edges of the 
+           (3) a list of 3-tuples, (l, v1, v2) representing edges of the
                Voronoi diagram.  l is the index of the line, v1 and v2 are
-               the indices of the vetices at the end of the edge.  If 
+               the indices of the vetices at the end of the edge.  If
                v1 or v2 is -1, the line extends to infinity.
     """
     siteList = SiteList(points)
