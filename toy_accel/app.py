@@ -77,7 +77,7 @@ def view_main(args):
     os.mkdir(fig_out_dir)
 
     if is_short:
-        plot_toy.view_clustering(db_out_fn, top_fn, fig_out_dir)
+        plot_toy.view_clustering(db_out_fn, top_fn, fig_out_dir, suptitle)
     else:
         plot_toy.view_movie(db_out_fn, top_fn, fig_out_dir, stride, suptitle,
                             show_beta)

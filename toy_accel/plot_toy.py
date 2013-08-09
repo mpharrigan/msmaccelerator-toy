@@ -12,6 +12,7 @@ import os
 import sqlite3 as sql
 import toy_accel.mullerforce as mf
 import toy_accel.run_accel as run_accel
+import toy_accel.voronoi as voronoi
 
 
 def get_trajlist_from_dir(directory):
@@ -148,7 +149,7 @@ class ToyPlotter:
 
     def plot_clustering_to(self, i, show=False, save=True, suptitle=None):
         # Plot potential
-        limits = mf.MullerForce.plot()
+        limits = mf.MullerForce.plot(zorder=1)
 
         # Get the model
         model_sql = self.all_models[i]
@@ -162,7 +163,7 @@ class ToyPlotter:
             xs = t.xyz[:, 0, 0]
             ys = t.xyz[:, 0, 1]
             # Plot them white
-            pp.plot(xs, ys, 'wo')
+            pp.plot(xs, ys, 'wo', zorder=2)
 
         # Get generators
         points = list()
@@ -173,7 +174,10 @@ class ToyPlotter:
             points.append(point[0:2])  # Just x,y
 
 
-        mf.MullerForce.plot_voronoi(points)
+        voronoi.plot_voronoi(points, zorder=3)
+
+        # Can use arrows to show flux, but it's too messy.
+        # voronoi.plot_flux(points, model.counts, zorder=4)
 
         title = "Clustering after round %d" % (i + 1)
 
@@ -214,7 +218,7 @@ class ToyPlotter:
             if show: self.show_fig(suptitle, title)
             if save: self.save_fig(suptitle, title)
 
-    def plot_starting_states(self, i, show=False, save=False):
+    def plot_starting_states(self, i, show=False, save=False, zorder=1):
         # Get states
         sstate_sql = self.all_starting[i]
         sstates = get_starting_state_from_sql(sstate_sql, self.top_fn)
@@ -225,7 +229,7 @@ class ToyPlotter:
         for sstate in sstates:
             x = sstate.xyz[0, 0, 0]
             y = sstate.xyz[0, 0, 1]
-            pp.plot(x, y, 'o', markersize=12, color=colors.next())
+            pp.plot(x, y, 'o', markersize=12, color=colors.next(), zorder=zorder)
 
 
         if show: self.show_fig()
@@ -233,7 +237,7 @@ class ToyPlotter:
 
     def plot_starting_after(self, i, show=False, save=True, suptitle=None):
         self.plot_clustering_to(i, show=False, save=False)
-        self.plot_starting_states(i + 1, show=False, save=False)
+        self.plot_starting_states(i + 1, show=False, save=False, zorder=5)
 
         title = "Starting states for round %d" % (i + 2)
 
@@ -284,11 +288,12 @@ def view_starting_states(db_fn, top_fn, fig_out_dir):
     for i in range(length):
         p.plot_starting_states(i)
 
-def view_clustering(db_fn, top_fn, fig_out_dir):
+def view_clustering(db_fn, top_fn, fig_out_dir, suptitle):
     p = ToyPlotter(db_fn, top_fn, fig_out_dir)
     length = len(p.all_models)
     for i in range(length):
-        p.plot_clustering_to(i)
+        print("Plotting model %d" % i)
+        p.plot_clustering_to(i, suptitle=suptitle)
 
 def view_movie(db_fn, top_fn, fig_out_dir, stride, suptitle, show_beta=False):
     p = ToyPlotter(db_fn, top_fn, fig_out_dir)

@@ -6,11 +6,12 @@ that it affects the meaning of the temperature and kinetic energy. So
 take the meaning of those numbers with a grain of salt.
 """
 
-import matplotlib as mpl
+
 import matplotlib.pyplot as pp
 import numpy as np
 import simtk.openmm as mm
-import toy_accel.voronoi as voronoi
+
+
 
 
 class MullerForce(mm.CustomExternalForce):
@@ -61,54 +62,4 @@ class MullerForce(mm.CustomExternalForce):
         ax.contourf(xx, yy, V.clip(max=200), 40, **kwargs)
         return minx, maxx, miny, maxy
 
-    @classmethod
-    def plot_voronoi(cls, points, limits=None, color='black'):
-        PL = []
-        for p in points:
-            PL.append(voronoi.Site(x=p[0], y=p[1]))
 
-        v, eqn, edges, wtf = voronoi.computeVoronoiDiagram(PL)
-
-        xmin = wtf[0]
-        ymin = wtf[1]
-        xmax = wtf[2]
-        ymax = wtf[3]
-
-        if not limits is None:
-            xmin = limits[0]
-            xmax = limits[1]
-            ymin = limits[2]
-            ymax = limits[3]
-
-        edge_points = []
-        for (l, x1, x2) in edges:
-            if x1 >= 0 and x2 >= 0:
-                edge_points.append((v[x1], v[x2]))
-            elif x1 == -1:
-                a, b, c = eqn[l]
-                x = xmin
-                y = (c - x * a) / b
-                if y < ymin:
-                    y = ymin
-                    x = (c - y * b) / a
-                elif y > ymax:
-                    y = ymax
-                    x = (c - y * b) / a
-                edge_points.append(((x, y), v[x2]))
-            elif x2 == -1:
-                a, b, c = eqn[l]
-                x = xmax
-                y = (c - x * a) / b
-                if y < ymin:
-                    y = ymin
-                    x = (c - y * b) / a
-                elif y > ymax:
-                    y = ymax
-                    x = (c - y * b) / a
-                edge_points.append((v[x1], (x, y)))
-
-        lines = mpl.collections.LineCollection(edge_points, linewidths=1, color=color)
-
-        pp.gca().add_collection(lines)
-
-        return wtf

@@ -96,6 +96,11 @@ Algorithmica 2, 153-174.
 import math
 import sys
 import getopt
+
+import matplotlib as mpl
+from matplotlib import pyplot as pp
+import numpy as np
+
 TOLERANCE = 1e-9
 BIG_FLOAT = 1e38
 
@@ -839,3 +844,98 @@ if __name__ == "__main__":
 
     sl = SiteList(pts)
     voronoi(sl, c)
+
+
+def plot_voronoi(points, limits=None, color='black', zorder=1):
+    PL = []
+    for p in points:
+        PL.append(Site(x=p[0], y=p[1]))
+
+    v, eqn, edges, wtf = computeVoronoiDiagram(PL)
+
+    xmin = wtf[0]
+    ymin = wtf[1]
+    xmax = wtf[2]
+    ymax = wtf[3]
+
+    if not limits is None:
+        xmin = limits[0]
+        xmax = limits[1]
+        ymin = limits[2]
+        ymax = limits[3]
+
+    edge_points = []
+    for (l, x1, x2) in edges:
+        if x1 >= 0 and x2 >= 0:
+            edge_points.append((v[x1], v[x2]))
+        elif x1 == -1:
+            a, b, c = eqn[l]
+            x = xmin
+            y = (c - x * a) / b
+            if y < ymin:
+                y = ymin
+                x = (c - y * b) / a
+            elif y > ymax:
+                y = ymax
+                x = (c - y * b) / a
+            edge_points.append(((x, y), v[x2]))
+        elif x2 == -1:
+            a, b, c = eqn[l]
+            x = xmax
+            y = (c - x * a) / b
+            if y < ymin:
+                y = ymin
+                x = (c - y * b) / a
+            elif y > ymax:
+                y = ymax
+                x = (c - y * b) / a
+            edge_points.append((v[x1], (x, y)))
+
+    lines = mpl.collections.LineCollection(edge_points, linewidths=1,
+                                           color=color, zorder=zorder)
+
+    pp.gca().add_collection(lines)
+
+    return wtf
+
+def plot_flux(points, counts, zorder):
+    points = np.array(points)
+
+
+    for i in range(len(counts.indptr) - 1):
+        js = counts.indices[counts.indptr[i]:counts.indptr[i + 1]]
+        for j in js:
+            x = points[i, 0]
+            y = points[i, 1]
+            dx = points[j, 0] - x
+            dy = points[j, 1] - y
+            wscale = counts[i, j]
+            if(wscale > TOLERANCE and np.abs(dx) > TOLERANCE and np.abs(dy) > TOLERANCE):
+                pp.arrow(x, y, dx, dy, color='r', width=0.0005 * wscale, length_includes_head=True, zorder=zorder)
+            else:
+                pass
+
+
+def test():
+    points = [
+              [1.0, 1.0],
+              [2.0, 2.0],
+              [3.0, 1.0]]
+    points = np.array(points)
+
+    counts = [
+              [0, 2, 3],
+              [2, 0, 5],
+              [3, 5, 0]]
+    counts = np.array(counts)
+
+    pp.plot(points[:, 0], points[:, 1], 'o')
+
+    pp.xlim((0, 4))
+    pp.ylim((0, 4))
+
+    plot_voronoi(points)
+
+
+
+    pp.show()
