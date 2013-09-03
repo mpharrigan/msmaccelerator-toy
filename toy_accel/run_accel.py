@@ -100,7 +100,7 @@ def vary_beta_scheduler(n_rounds, n_engines, beta_center=None, beta_tension=None
 def run_accel(args):
     """Run an accelerated simulation.
 
-    args contains different arugments depending on args.runtype.
+    args contains different arguments depending on args.runtype.
 
     This function sets up the msmaccelerator server and then calls
     the appropriate function to schedule the rounds of sampling.
