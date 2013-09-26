@@ -58,7 +58,7 @@ def generate_config_file(rep_int, n_steps, rel_top_fn, seed_rel_fn, beta, config
     # Prepare config
     configs = list()
     configs.append("c = get_config()")
-    configs.append("c.Device.zmq_port=12346")
+    configs.append("c.Device.zmq_port=12345")
     configs.append("c.Modeler.use_custom_metric = True")
     configs.append("c.Modeler.custom_metric_path = 'metric.pickl'")
     configs.append("c.Modeler.clusterer = 'hybrid'")

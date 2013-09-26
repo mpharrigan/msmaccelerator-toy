@@ -31,7 +31,7 @@ def _print_round_info(i_round, n_engines, beta):
     print("======================================")
     print("\n\n")
 
-def run_round(n_engines, beta):
+def run_round(n_engines, beta, max_eng=7):
     """Run a single round of simulation.
 
     This function is called by the various schedulers, which can vary the
@@ -40,9 +40,30 @@ def run_round(n_engines, beta):
     proc = subprocess.Popen(['accelerator', 'interact', '--set_beta=%f' % beta])
     proc.wait()
 
+    n_chuncks = n_engines // max_eng
+
+    # Chunk calculations in groups of max_eng
+    for _ in xrange(n_chuncks):
+        # start your engines!
+        pids = set()  # keep track of the pids of all of the engines we start
+        for j in range(max_eng):
+            # each of these engines will run a single trajectory
+            proc = subprocess.Popen(['accelerator', 'OpenMM',
+                '--device_index=%d' % j ])
+            pids.add(proc.pid)
+            time.sleep(1)
+
+        # wait on the engines to finish
+        while pids:
+            pid, retval = os.wait()
+            print('{p} finished'.format(p=pid))
+            pids.remove(pid)
+
+    # Do the leftovers
+    n_leftovers = n_engines % max_eng
     # start your engines!
     pids = set()  # keep track of the pids of all of the engines we start
-    for j in range(n_engines):
+    for j in xrange(n_leftovers):
         # each of these engines will run a single trajectory
         proc = subprocess.Popen(['accelerator', 'OpenMM',
             '--device_index=%d' % j ])
@@ -54,6 +75,7 @@ def run_round(n_engines, beta):
         pid, retval = os.wait()
         print('{p} finished'.format(p=pid))
         pids.remove(pid)
+
 
     # build MSM
     proc = subprocess.Popen(['accelerator', 'model'])
@@ -80,9 +102,9 @@ def vary_beta_scheduler(n_rounds, n_engines, beta_center=None, beta_tension=None
     switches from low to high.
     """
     if beta_center is None:
-        beta_center = n_rounds / 2
+        beta_center = n_rounds / 2.0
     if beta_tension is None:
-        beta_tension = n_rounds / 15
+        beta_tension = n_rounds / 15.0
 
     print("======================================")
     print("Beta setup.")
@@ -94,7 +116,6 @@ def vary_beta_scheduler(n_rounds, n_engines, beta_center=None, beta_tension=None
         beta = logistic_beta(i, beta_center, beta_tension)
         _print_round_info(i, n_engines, beta)
         run_round(n_engines, beta)
-
 
 
 def run_accel(args):
