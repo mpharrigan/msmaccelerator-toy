@@ -46,7 +46,7 @@ class MullerForce(mm.CustomExternalForce):
         for j in range(4):
             value += cls.AA[j] * np.exp(cls.aa[j] * (x - cls.XX[j]) ** 2 + \
                 cls.bb[j] * (x - cls.XX[j]) * (y - cls.YY[j]) + cls.cc[j] * (y - cls.YY[j]) ** 2)
-        return value*self.strength
+        return value*cls.strength
 
     @classmethod
     def plot(cls, ax=None, minx=-1.5, maxx=1.2, miny=-0.2, maxy=2, **kwargs):
