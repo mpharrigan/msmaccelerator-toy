@@ -116,7 +116,7 @@ def check_mdtraj_version():
 
 
 setup_args = {
-    'name': 'toy-accel',
+    'name': 'toy_accel',
     'version': VERSION,
     'author': 'Matthew Harrigan',
     'license': 'GPLv3',
