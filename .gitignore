@@ -3,3 +3,6 @@ build/
 dist/
 *.pyc
 .settings/
+
+.spyderproject
+toy_accel/version.py
