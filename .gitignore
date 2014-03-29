@@ -6,3 +6,5 @@ dist/
 
 .spyderproject
 toy_accel/version.py
+.project
+.pydevproject
